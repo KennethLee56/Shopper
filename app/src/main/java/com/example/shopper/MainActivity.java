@@ -9,11 +9,23 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
 
     //declare an Intent
     Intent intent;
+
+    //declare a database handler
+    DBHandler dbHandler;
+
+    //declare a Shopping Lists Cursor Adapter
+    ShoppingLists shoppingListsAdapter;
+
+    //declare a ListView
+    ListView shopperListView;
+
     /**
      * This method initializes the Action Bar and View of
      * the Main Activity.
@@ -27,6 +39,30 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //initialize the database handler
+        dbHandler = new DBHandler(this, null);
+
+        //initialize the ListView
+        shopperListView = (ListView) findViewById(R.id.shopperListView);
+
+        //initialize the Shopping Lists Cursor Adapter
+        shoppingListsAdapter = new ShoppingLists(this, dbHandler.getShoppingLists(), 0);
+
+        //set Shopping Lists Cursor Adapter on ListView
+        shopperListView.setAdapter(shoppingListsAdapter);
+
+        //set OnItemClickListener to shopper ListView
+        shopperListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //launch the View List Activity and sending it the id of the
+                //shopping list
+                intent = new Intent(MainActivity.this, ViewList.class);
+                intent.putExtra("_id", id);
+                startActivity(intent);
+            }
+        });
     }
 
     /**
